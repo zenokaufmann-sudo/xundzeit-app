@@ -26,6 +26,8 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npx vitest run
+        env:
+          TZ: Europe/Zurich
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
