@@ -139,7 +139,6 @@ export function MorgenCheckin({ datum, tag, vortag, v, alkoholFragen, rueckblick
       <Skala titel="Wie hast du geschlafen?" labels={SCHLAF} wert={tag?.nacht?.schlafSubjektiv} onWahl={(schlafSubjektiv) => aendereNacht(datum, { schlafSubjektiv })} />
       <Frage titel="Display in der letzten Stunde vor dem Schlafen">
         <EineAuswahl optionen={DISPLAY} wert={tag?.nacht?.display} vorschlag={v.display} onWahl={(display) => aendereNacht(datum, { display })} />
-        <OptionaleZeit label="Licht aus" wert={tag?.nacht?.lichtAus} onWert={(lichtAus) => aendereNacht(datum, { lichtAus })} />
       </Frage>
       {alkoholFragen && (
         <AlkoholFrage datum={addTage(datum, -1)} wert={vortag?.alkohol} vorschlag={v.alkohol} titel={rueckblick ? 'Alkohol am Vorabend?' : 'Alkohol gestern Abend?'} />

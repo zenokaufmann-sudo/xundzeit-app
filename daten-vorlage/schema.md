@@ -20,7 +20,7 @@ Datum `YYYY-MM-DD`, Zeitpunkte ISO 8601 mit lokalem Offset, Woche nach ISO 8601 
 
 **Zuordnung zum Tag.**
 - `alkohol` steht beim Tag, an dem getrunken wurde. Als Auslöser zählt er für den **Folgetag**.
-- `nacht` (Schlaf, Display, Licht aus) steht beim **Aufwachtag**, beschreibt also die Nacht davor.
+- `nacht` (Schlaf, Display) steht beim **Aufwachtag**, beschreibt also die Nacht davor.
 - Eine Episode steht beim Tag ihres Beginns.
 - Eine Krankheit gilt für alle Tage von `beginn` bis `ende`. Ohne `ende` läuft sie noch.
 
@@ -42,7 +42,6 @@ Datum `YYYY-MM-DD`, Zeitpunkte ISO 8601 mit lokalem Offset, Woche nach ISO 8601 
 | `kopfwehStatus` | `keines` \| `hatte` | Fehlt: unbekannt |
 | `nacht.schlafSubjektiv` | 1–5 | 1 sehr schlecht, 5 sehr gut |
 | `nacht.display` | `keine` \| `<15` \| `15-60` \| `>60` | Bildschirm in der letzten Stunde vor dem Schlafen (Minuten) |
-| `nacht.lichtAus` | `HH:MM` | Optional |
 | `koffein` | `{ja, portionen?, letzte?, zeit?}` | `letzte`: `vor12` \| `nach12`, `zeit`: `HH:MM` |
 | `alkohol` | `{ja, getraenke?, zeitpunkt?}` | Standardgetränke, `bis18` \| `abend` \| `spaet` |
 | `suessgetraenke` | `{ja, anzahl?}` | Gläser oder Dosen |

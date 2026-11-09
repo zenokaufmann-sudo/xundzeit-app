@@ -23,7 +23,7 @@ const liste = (werte?: string[]) => (werte?.length ? werte.join(', ') : undefine
 
 const SPALTEN_TAGE = [
   'datum', 'quelle', 'kopfweh', 'episoden', 'staerke_max',
-  'schlaf_subjektiv', 'display_vor_schlaf', 'licht_aus',
+  'schlaf_subjektiv', 'display_vor_schlaf',
   'koffein', 'koffein_portionen', 'koffein_letzte', 'koffein_zeit',
   'alkohol', 'alkohol_getraenke', 'alkohol_zeitpunkt',
   'suessgetraenke', 'suessgetraenke_anzahl', 'wasser',
@@ -52,7 +52,6 @@ function zeileTag(datum: Datum, t: TagesEintrag | undefined, g: GarminTag | unde
     staerke_max: staerkeAm(t) || undefined,
     schlaf_subjektiv: t?.nacht?.schlafSubjektiv,
     display_vor_schlaf: t?.nacht?.display,
-    licht_aus: t?.nacht?.lichtAus,
     koffein: t?.koffein?.ja,
     koffein_portionen: t?.koffein?.portionen,
     koffein_letzte: t?.koffein?.letzte,

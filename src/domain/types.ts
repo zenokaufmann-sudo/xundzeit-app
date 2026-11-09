@@ -68,7 +68,6 @@ export interface SprayEinnahme {
 export interface Nacht {
   schlafSubjektiv?: Stufe5
   display?: Display
-  lichtAus?: string
 }
 
 export interface TagesFelder {
