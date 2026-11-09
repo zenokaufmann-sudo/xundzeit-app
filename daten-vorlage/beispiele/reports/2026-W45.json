@@ -1,0 +1,253 @@
+{
+  "woche": "2026-W45",
+  "schemaVersion": 1,
+  "beispiel": true,
+  "erstelltAm": "2026-11-08T17:00:00+01:00",
+  "zeitraum": {
+    "von": "2026-11-02",
+    "bis": "2026-11-08"
+  },
+  "erfassteTage": 7,
+  "kernaussagen": [
+    "Beispiel: Kopfweh an 2 von 7 Tagen, beide nach weniger als 6,5 Stunden Schlaf",
+    "Beispiel: Paracetamol 500 mg half in 1 von 2 Fällen deutlich",
+    "Beispiel: Woche vollständig erfasst, Report-Qualität hoch"
+  ],
+  "zeitreihen": [
+    {
+      "id": "schlaf",
+      "titel": "Schlaf",
+      "einheit": "h",
+      "punkte": [
+        {
+          "datum": "2026-11-02",
+          "wert": 7.5
+        },
+        {
+          "datum": "2026-11-03",
+          "wert": 6.2
+        },
+        {
+          "datum": "2026-11-04",
+          "wert": 7.9
+        },
+        {
+          "datum": "2026-11-05",
+          "wert": 5.8
+        },
+        {
+          "datum": "2026-11-06",
+          "wert": 7.1
+        },
+        {
+          "datum": "2026-11-07",
+          "wert": 8.2
+        },
+        {
+          "datum": "2026-11-08",
+          "wert": 7.4
+        }
+      ]
+    },
+    {
+      "id": "hrv",
+      "titel": "HRV",
+      "einheit": "ms",
+      "punkte": [
+        {
+          "datum": "2026-11-02",
+          "wert": 62
+        },
+        {
+          "datum": "2026-11-03",
+          "wert": 54
+        },
+        {
+          "datum": "2026-11-04",
+          "wert": 66
+        },
+        {
+          "datum": "2026-11-05",
+          "wert": 49
+        },
+        {
+          "datum": "2026-11-06",
+          "wert": 60
+        },
+        {
+          "datum": "2026-11-07",
+          "wert": 68
+        },
+        {
+          "datum": "2026-11-08",
+          "wert": 63
+        }
+      ]
+    },
+    {
+      "id": "stress",
+      "titel": "Stress",
+      "punkte": [
+        {
+          "datum": "2026-11-02",
+          "wert": 27
+        },
+        {
+          "datum": "2026-11-03",
+          "wert": 38
+        },
+        {
+          "datum": "2026-11-04",
+          "wert": 24
+        },
+        {
+          "datum": "2026-11-05",
+          "wert": 44
+        },
+        {
+          "datum": "2026-11-06",
+          "wert": 31
+        },
+        {
+          "datum": "2026-11-07",
+          "wert": 22
+        },
+        {
+          "datum": "2026-11-08",
+          "wert": 26
+        }
+      ]
+    },
+    {
+      "id": "koerperBelastung",
+      "titel": "Körper-Belastung",
+      "punkte": [
+        {
+          "datum": "2026-11-02",
+          "wert": 3
+        },
+        {
+          "datum": "2026-11-03",
+          "wert": 4
+        },
+        {
+          "datum": "2026-11-04",
+          "wert": 2
+        },
+        {
+          "datum": "2026-11-05",
+          "wert": 3
+        },
+        {
+          "datum": "2026-11-06",
+          "wert": 4
+        },
+        {
+          "datum": "2026-11-07",
+          "wert": 5
+        },
+        {
+          "datum": "2026-11-08",
+          "wert": 2
+        }
+      ]
+    },
+    {
+      "id": "befinden",
+      "titel": "Befinden",
+      "punkte": [
+        {
+          "datum": "2026-11-02",
+          "wert": 4
+        },
+        {
+          "datum": "2026-11-03",
+          "wert": 3
+        },
+        {
+          "datum": "2026-11-04",
+          "wert": 4
+        },
+        {
+          "datum": "2026-11-05",
+          "wert": 2
+        },
+        {
+          "datum": "2026-11-06",
+          "wert": 3
+        },
+        {
+          "datum": "2026-11-07",
+          "wert": 5
+        },
+        {
+          "datum": "2026-11-08",
+          "wert": 4
+        }
+      ]
+    },
+    {
+      "id": "kopfweh",
+      "titel": "Kopfweh-Stärke",
+      "punkte": [
+        {
+          "datum": "2026-11-02",
+          "wert": 0
+        },
+        {
+          "datum": "2026-11-03",
+          "wert": 1
+        },
+        {
+          "datum": "2026-11-04",
+          "wert": 0
+        },
+        {
+          "datum": "2026-11-05",
+          "wert": 2
+        },
+        {
+          "datum": "2026-11-06",
+          "wert": 0
+        },
+        {
+          "datum": "2026-11-07",
+          "wert": 0
+        },
+        {
+          "datum": "2026-11-08",
+          "wert": 0
+        }
+      ]
+    }
+  ],
+  "korrelationen": [
+    {
+      "faktor": "schlaf-kurz",
+      "titel": "Schlaf unter 6,5 h",
+      "risiko": 2.4,
+      "nMit": 7,
+      "nOhne": 21,
+      "einschaetzung": "moderat",
+      "kommentar": "Beispiel: Kopfweh an 4 von 7 Tagen, sonst an 5 von 21"
+    },
+    {
+      "faktor": "alkohol-vorabend",
+      "titel": "Alkohol am Vorabend",
+      "risiko": 1.8,
+      "nMit": 6,
+      "nOhne": 22,
+      "einschaetzung": "moderat",
+      "kommentar": "Beispiel: Kopfweh an 3 von 6 Tagen, sonst an 6 von 22"
+    },
+    {
+      "faktor": "druckabfall",
+      "titel": "Luftdruckabfall über 5 hPa",
+      "risiko": null,
+      "nMit": 3,
+      "nOhne": 25,
+      "einschaetzung": "zu-wenig-daten",
+      "kommentar": "Beispiel: erst 3 Tage mit starkem Druckabfall"
+    }
+  ]
+}

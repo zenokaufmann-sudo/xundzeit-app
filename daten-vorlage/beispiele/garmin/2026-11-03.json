@@ -1,0 +1,23 @@
+{
+  "datum": "2026-11-03",
+  "schemaVersion": 1,
+  "beispiel": true,
+  "erstelltAm": "2026-11-04T06:45:00+01:00",
+  "schlaf": {
+    "dauerMin": 372,
+    "score": 75
+  },
+  "hrv": {
+    "nachtMittelMs": 54,
+    "status": "balanced"
+  },
+  "ruhepuls": 49,
+  "stress": {
+    "durchschnitt": 38
+  },
+  "bodyBattery": {
+    "hoch": 89,
+    "tief": 25
+  },
+  "aktivitaeten": []
+}

@@ -1,0 +1,30 @@
+{
+  "datum": "2026-11-04",
+  "schemaVersion": 1,
+  "beispiel": true,
+  "erstelltAm": "2026-11-05T06:45:00+01:00",
+  "schlaf": {
+    "dauerMin": 474,
+    "score": 80
+  },
+  "hrv": {
+    "nachtMittelMs": 66,
+    "status": "balanced"
+  },
+  "ruhepuls": 50,
+  "stress": {
+    "durchschnitt": 24
+  },
+  "bodyBattery": {
+    "hoch": 86,
+    "tief": 26
+  },
+  "aktivitaeten": [
+    {
+      "sportart": "running",
+      "dauerMin": 45,
+      "distanzKm": 9.1,
+      "trainingsbelastung": 72
+    }
+  ]
+}

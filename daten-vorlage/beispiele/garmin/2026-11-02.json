@@ -1,0 +1,30 @@
+{
+  "datum": "2026-11-02",
+  "schemaVersion": 1,
+  "beispiel": true,
+  "erstelltAm": "2026-11-03T06:45:00+01:00",
+  "schlaf": {
+    "dauerMin": 450,
+    "score": 70
+  },
+  "hrv": {
+    "nachtMittelMs": 62,
+    "status": "balanced"
+  },
+  "ruhepuls": 48,
+  "stress": {
+    "durchschnitt": 27
+  },
+  "bodyBattery": {
+    "hoch": 92,
+    "tief": 24
+  },
+  "aktivitaeten": [
+    {
+      "sportart": "cycling",
+      "dauerMin": 95,
+      "distanzKm": 42.3,
+      "trainingsbelastung": 118
+    }
+  ]
+}
