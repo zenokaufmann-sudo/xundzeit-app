@@ -22,12 +22,16 @@ import {
 } from '../ui/bausteine'
 import { useEinstellungen } from '../ui/einstellungen'
 import { useToast } from '../ui/toast'
+import { useWischen } from '../ui/wischen'
 import { Wochenring } from '../ui/Wochenring'
 import { Zeitleiste } from '../ui/Zeitleiste'
 
 interface Props {
   eintraege: TagesEintrag[]
   jetzt: Date
+  /** Gewählter vergangener Tag, null zeigt heute. */
+  auswahl: Datum | null
+  onAuswahl: (datum: Datum | null) => void
   onKopfweh: (datum: Datum, id?: string) => void
   krankheiten: Krankheit[]
   garmin: Map<Datum, GarminTag>
@@ -357,24 +361,36 @@ export function ZusatzBereich({ datum, tag, eintraege, krankheiten, onKrankheit,
   )
 }
 
-export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKrankheit }: Props) {
-  const [nachtrag, setNachtrag] = useState<Datum | null>(null)
+export function Heute({ eintraege, krankheiten, garmin, jetzt, auswahl, onAuswahl, onKopfweh, onKrankheit }: Props) {
   const [artWahl, setArtWahl] = useState<'morgen' | 'abend' | null>(null)
+  const [richtung, setRichtung] = useState<-1 | 0 | 1>(0)
   const zeigeToast = useToast()
   const { abschwellendName, wasser: mitWasser } = useEinstellungen()
 
   const heute = logischerTag(jetzt)
-  const datum = nachtrag ?? heute
+  const datum = auswahl && auswahl < heute ? auswahl : heute
+  const vergangen = datum !== heute
+
+  const zeigeTag = (ziel: Datum, schritt: -1 | 0 | 1) => {
+    setRichtung(schritt)
+    setArtWahl(null)
+    onAuswahl(ziel === heute ? null : ziel)
+  }
+  const wischen = useWischen((schritt) => {
+    const ziel = addTage(datum, schritt)
+    if (ziel <= heute) zeigeTag(ziel, schritt)
+  })
+
   const nachDatum = new Map(eintraege.map((t) => [t.datum, t]))
   const tag = nachDatum.get(datum)
   const vortag = nachDatum.get(addTage(datum, -1))
   const v = vorschlaege(eintraege, datum, garmin.get(datum))
-  const art = nachtrag ? 'abend' : (artWahl ?? checkinArt(jetzt))
+  const art = artWahl ?? (vergangen ? 'abend' : checkinArt(jetzt))
 
   // Bleibt nach der Antwort sichtbar, damit sich die Frage nicht unter dem Finger wegbewegt.
   const gefragt = useRef(new Map<Datum, boolean>())
   if (!gefragt.current.has(datum)) gefragt.current.set(datum, vortag?.alkohol === undefined)
-  const alkoholGefragt = gefragt.current.get(datum)!
+  const alkoholGefragt = vergangen || gefragt.current.get(datum)!
 
   const offenMorgen: Partial<Record<'display' | 'alkohol', unknown>> = {}
   if (!tag?.nacht?.display && v.display) offenMorgen.display = v.display
@@ -409,7 +425,7 @@ export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKran
     { id: 'abend', titel: 'Abend', status: abend },
   ] as const
 
-  const fehlt = nachtrag ? undefined : fehlenderTag(eintraege, jetzt)
+  const fehlt = vergangen ? undefined : fehlenderTag(eintraege, jetzt)
   const wirkung = offeneWirkung(eintraege, jetzt)
   const woche = wocheErfasst(eintraege, heute)
   const sprayTage = abschwellendAmStueck(eintraege, jetzt)
@@ -419,17 +435,17 @@ export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKran
 
   return (
     <>
-      <main className="seite seite--heute">
+      <main className="seite seite--heute" {...wischen}>
         <header className="kopfzeile">
           <div>
-            <h1>{nachtrag ? `Nachtrag ${wochentag(datum)}` : wochentag(datum)}</h1>
+            <h1>{datum === addTage(heute, -1) ? 'Gestern' : wochentag(datum)}</h1>
             <p className="leise">{formatDatum(datum)}</p>
           </div>
           <Wochenring woche={woche} />
         </header>
 
-        {nachtrag && (
-          <button className="knopf knopf--breit" onClick={() => setNachtrag(null)}>Nachtrag fertig, zurück zu heute</button>
+        {vergangen && (
+          <button className="knopf knopf--breit" onClick={() => zeigeTag(heute, 1)}>Zurück zu heute</button>
         )}
 
         {fehlt && fehltName && (
@@ -445,7 +461,7 @@ export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKran
               >
                 Wie üblich
               </button>
-              <button className="knopf" onClick={() => setNachtrag(fehlt)}>Kurz ausfüllen</button>
+              <button className="knopf" onClick={() => zeigeTag(fehlt, -1)}>Kurz ausfüllen</button>
             </div>
           </section>
         )}
@@ -470,16 +486,20 @@ export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKran
           <p className="hinweis">{abschwellendName} seit {sprayTage} Tagen am Stück. Bei längerer Anwendung gewöhnt sich die Nasenschleimhaut daran.</p>
         )}
 
-        <section aria-label="Check-in" className="checkin" key={`${datum}-${art}`}>
+        <section
+          aria-label="Check-in"
+          className={`checkin${richtung === -1 ? ' checkin--von-links' : richtung === 1 ? ' checkin--von-rechts' : ''}`}
+          key={`${datum}-${art}`}
+        >
           <div className="stand">
             <div className="stand__teile">
-              {segmente.filter((s) => !nachtrag || s.id === 'abend').map((s) => (
+              {segmente.map((s) => (
                 <button
                   key={s.id}
                   className={`stand__teil ${s.status.komplett ? 'stand__teil--komplett' : ''}`}
                   aria-current={art === s.id ? 'true' : undefined}
                   aria-label={`${s.titel}: ${s.status.komplett ? 'komplett' : `${s.status.beantwortet} von ${s.status.total} erfasst`}`}
-                  onClick={() => setArtWahl(s.id)}
+                  onClick={() => { setRichtung(0); setArtWahl(s.id) }}
                 >
                   <span className="stand__zeile">
                     <strong>{s.titel}</strong>
@@ -495,11 +515,11 @@ export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKran
             </div>
           </div>
           {art === 'morgen'
-            ? <MorgenCheckin datum={datum} tag={tag} vortag={vortag} v={v} alkoholFragen={alkoholGefragt} />
-            : <AbendCheckin datum={datum} tag={tag} v={v} onKopfweh={onKopfweh} />}
+            ? <MorgenCheckin datum={datum} tag={tag} vortag={vortag} v={v} alkoholFragen={alkoholGefragt} rueckblick={vergangen} />
+            : <AbendCheckin datum={datum} tag={tag} v={v} onKopfweh={onKopfweh} rueckblick={vergangen} />}
         </section>
 
-        <ZusatzBereich key={datum} datum={datum} tag={tag} eintraege={eintraege} krankheiten={krankheiten} onKrankheit={onKrankheit} />
+        <ZusatzBereich key={datum} datum={datum} tag={tag} eintraege={eintraege} krankheiten={krankheiten} onKrankheit={onKrankheit} rueckblick={vergangen} />
       </main>
 
       <div className="dock">
@@ -527,7 +547,7 @@ export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKran
                 className="knopf"
                 onClick={async () => {
                   const n = await wieGestern(datum)
-                  zeigeToast({ text: n > 0 ? `${n} Werte von gestern übernommen` : 'Schon alles ausgefüllt' })
+                  zeigeToast({ text: n > 0 ? `${n} Werte ${vergangen ? 'vom Vortag' : 'von gestern'} übernommen` : 'Schon alles ausgefüllt' })
                 }}
               >
                 Wie gestern

@@ -50,6 +50,8 @@ iOS öffnet solche Links meist in Safari, also nicht in der installierten App. D
 | Analyse | Kennzahlen, Auslöser-Vergleich, Verläufe und Wochenreport |
 | Einstellungen | Wohnort, Medikamente, CSV-Export, GitHub-Sync |
 
+Im Tab Heute wechselst du mit einem Wisch nach rechts zu früheren Tagen und mit einem Wisch nach links wieder Richtung heute. In die Zukunft geht es nicht.
+
 Gestrichelte Werte sind Vorschläge. Sie zählen erst, wenn du sie antippst oder mit «Stimmt so» bestätigst. Bis 04:00 zählt noch zum Vortag.
 
 **Sync:** Läuft nur bei offener App, beim Öffnen, nach Änderungen und sobald wieder Netz da ist. Für den Sonntagsreport die App vor 17:00 einmal öffnen.

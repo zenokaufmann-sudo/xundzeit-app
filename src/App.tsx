@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from './db/db'
 import { beendeEpisode, einnahmeMitStandard, ladeEinstellungen } from './db/repo'
-import { dauerMinuten, formatDauer, formatZeit } from './domain/datum'
+import { dauerMinuten, formatDauer, formatZeit, logischerTag } from './domain/datum'
 import { STAERKEN } from './domain/katalog'
 import type { Datum } from './domain/types'
 import { laufendeEpisode } from './domain/logik'
@@ -64,6 +64,10 @@ export function App() {
   useHintergrund(eintraege, krankheitenRoh)
   const [krankheitMaske, setKrankheitMaske] = useState<KrankheitOeffnen | null>(null)
   const [verlaufTag, setVerlaufTag] = useState<Datum | null>(null)
+  const [heuteAuswahl, setHeuteAuswahl] = useState<Datum | null>(null)
+  // Am neuen Tag immer auf heute starten, damit nichts versehentlich beim alten Tag landet.
+  const logisch = logischerTag(jetzt)
+  useEffect(() => setHeuteAuswahl(null), [logisch])
 
   const zeigeToast = useCallback((t: Toast) => setToast(t), [])
   useEffect(() => {
@@ -76,6 +80,7 @@ export function App() {
     setErfassung(null)
     setKrankheitMaske(null)
     setVerlaufTag(null)
+    setHeuteAuswahl(null)
     setTab(neu)
     history.replaceState(null, '', `?tab=${neu}`)
   }
@@ -120,6 +125,8 @@ export function App() {
         krankheiten={krankheiten}
         garmin={garmin}
         jetzt={jetzt}
+        auswahl={heuteAuswahl}
+        onAuswahl={setHeuteAuswahl}
         onKopfweh={(datum, id) => oeffneErfassung({ datum, id, zurueck: 'heute' })}
         onKrankheit={oeffneKrankheit}
       />

@@ -207,6 +207,9 @@ p { margin: 0; }
 .janein .chip--vorschlag { outline: 1px dashed var(--akzent); outline-offset: -5px; }
 
 /* Protokollzeilen */
+.seite--heute { touch-action: pan-y pinch-zoom; }
+.checkin--von-links { animation: von-links var(--kurz) var(--kurve); }
+.checkin--von-rechts { animation: von-rechts var(--kurz) var(--kurve); }
 .checkin, .protokoll { display: flex; flex-direction: column; gap: 16px; }
 .checkin > * + *, .protokoll > * + * { border-top: 1px solid var(--linie); padding-top: 16px; }
 .protokoll > .abschnitt + * { border-top: 0; padding-top: 0; }
@@ -371,6 +374,8 @@ p { margin: 0; }
 
 @keyframes zeichnen { from { stroke-dashoffset: 26; } to { stroke-dashoffset: 0; } }
 @keyframes einblenden { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes von-links { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+@keyframes von-rechts { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 
 /* Toast */
 .toast {

@@ -242,6 +242,95 @@ test('Kopfweh erfassen unten nur am Morgen, am Abend über die Frage', async ({ 
   await expect(page.locator('.dock').getByRole('button', { name: 'Kopfweh erfassen' })).toBeVisible()
 })
 
+async function wische(page: Page, dx: number, dy = 0, start?: { x: number; y: number }) {
+  const b = (await page.locator('.kopfzeile').boundingBox())!
+  const von = start ?? { x: 195, y: b.y + b.height / 2 }
+  await page.mouse.move(von.x, von.y)
+  await page.mouse.down()
+  await page.mouse.move(von.x + dx, von.y + dy, { steps: 6 })
+  await page.mouse.up()
+}
+const titel = (page: Page) => page.locator('.kopfzeile h1')
+
+test('Wischen wechselt zu früheren Tagen, aber nie in die Zukunft', async ({ page }) => {
+  await starten(page, ABEND, VERLAUF)
+  const heute = await titel(page).textContent()
+
+  await wische(page, -140)
+  await expect(titel(page)).toHaveText(heute!)
+  await expect(knopf(page, 'Zurück zu heute')).toHaveCount(0)
+
+  await wische(page, 140)
+  await expect(titel(page)).toHaveText('Gestern')
+  await expect(page.locator('.kopfzeile .leise')).toContainText('11.11.2026')
+  await page.waitForTimeout(250)
+  await page.screenshot({ path: `${AUSGABE}/heute-gestern.png` })
+  await pruefeTapZiele(page, 'Vergangener Tag')
+
+  await wische(page, 140)
+  await expect(page.locator('.kopfzeile .leise')).toContainText('10.11.2026')
+  await expect(titel(page)).not.toHaveText('Gestern')
+
+  await wische(page, -140)
+  await expect(titel(page)).toHaveText('Gestern')
+  await wische(page, -140)
+  await expect(titel(page)).toHaveText(heute!)
+  await expect(knopf(page, 'Zurück zu heute')).toHaveCount(0)
+  await wische(page, -140)
+  await expect(titel(page)).toHaveText(heute!)
+})
+
+test('Änderungen am gewischten Tag landen bei diesem Tag', async ({ page }) => {
+  await starten(page, ABEND)
+  await wische(page, 140)
+  await inFrage(page, 'Kopfweh an diesem Tag?', 'Nein').tap()
+  await expect.poll(async () => (await leseTag(page, '2026-11-11'))?.kopfwehStatus).toBe('keines')
+  expect(await leseTag(page, '2026-11-12')).toBeUndefined()
+
+  await page.locator('.stand__teil', { hasText: 'Morgen' }).tap()
+  await expect(page.getByText('Wie hast du geschlafen?')).toBeVisible()
+  await expect(titel(page)).toHaveText('Gestern')
+})
+
+test('Nach der Kopfweh-Erfassung bleibt der gewischte Tag offen', async ({ page }) => {
+  await starten(page, ABEND)
+  await wische(page, 140)
+  await inFrage(page, 'Kopfweh an diesem Tag?', 'Ja').tap()
+  await knopf(page, 'Mittag, 11–14 Uhr').tap()
+  await page.locator('[data-zone="schlaefe-l"]').first().tap()
+  await knopf(page, 'Fertig').tap()
+  await expect(titel(page)).toHaveText('Gestern')
+  await expect.poll(async () => (await leseTag(page, '2026-11-11'))?.episoden.length).toBe(1)
+  expect(await leseTag(page, '2026-11-12')).toBeUndefined()
+
+  await knopf(page, 'Verlauf').tap()
+  await knopf(page, 'Heute').tap()
+  await expect(knopf(page, 'Zurück zu heute')).toHaveCount(0)
+})
+
+test('Wischen löst nichts aus und stört weder Scrollen noch Zeitleiste', async ({ page }) => {
+  await starten(page, ABEND)
+  await wische(page, 140)
+  const nein = inFrage(page, 'Kopfweh an diesem Tag?', 'Nein')
+  const b = (await nein.boundingBox())!
+  await wische(page, -140, 0, { x: b.x + b.width / 2, y: b.y + b.height / 2 })
+  await expect(knopf(page, 'Zurück zu heute')).toHaveCount(0)
+  expect(await leseTag(page, '2026-11-11')).toBeUndefined()
+  expect(await leseTag(page, '2026-11-12')).toBeUndefined()
+  await wische(page, 140)
+  await expect(titel(page)).toHaveText('Gestern')
+
+  await wische(page, 70, 90)
+  await expect(page.locator('.kopfzeile .leise')).toContainText('11.11.2026')
+
+  const leiste = page.locator('.zeitleiste').first()
+  await leiste.scrollIntoViewIfNeeded()
+  const l = (await leiste.boundingBox())!
+  await wische(page, 140, 0, { x: l.x + 60, y: l.y + l.height / 2 })
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await expect(page.locator('.kopfzeile .leise')).toContainText('11.11.2026')
+})
+
 test('Tageszeiten per Ziehen als Bereich wählen', async ({ page }) => {
   await starten(page, ABEND)
   await inFrage(page, 'Kopfweh heute?', 'Ja').tap()
