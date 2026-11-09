@@ -234,9 +234,17 @@ test('Kopfweh am Abend eintragen', async ({ page }) => {
   expect(t?.episoden[0].medikamente[0]).toMatchObject({ name: 'Paracetamol', dosisMg: 500 })
 })
 
+test('Kopfweh erfassen unten nur am Morgen, am Abend über die Frage', async ({ page }) => {
+  await starten(page, ABEND)
+  await expect(inFrage(page, 'Kopfweh heute?', 'Ja')).toBeVisible()
+  await expect(page.locator('.dock').getByRole('button', { name: 'Kopfweh erfassen' })).toHaveCount(0)
+  await page.locator('.stand__teil', { hasText: 'Morgen' }).tap()
+  await expect(page.locator('.dock').getByRole('button', { name: 'Kopfweh erfassen' })).toBeVisible()
+})
+
 test('Tageszeiten per Ziehen als Bereich wählen', async ({ page }) => {
   await starten(page, ABEND)
-  await knopf(page, 'Kopfweh erfassen').tap()
+  await inFrage(page, 'Kopfweh heute?', 'Ja').tap()
   const box = async (name: string) => (await knopf(page, name).boundingBox())!
   const von = await box('Morgen, 6–11 Uhr')
   const bis = await box('Nachmittag, 14–18 Uhr')
@@ -368,7 +376,7 @@ test('Einstellungen steuern Medikamente und Wasser', async ({ page }) => {
   await inFrage(page, 'Wasser', 'Viel').tap()
   await expect(page.locator('.stand__teil', { hasText: 'Abend' })).toContainText('1/8')
 
-  await knopf(page, 'Kopfweh erfassen').tap()
+  await inFrage(page, 'Kopfweh heute?', 'Ja').tap()
   await knopf(page, 'Aspirin').tap()
   await expect.poll(async () => (await leseTag(page, '2026-11-12'))?.episoden[0]?.medikamente[0]).toMatchObject({ name: 'Aspirin', dosisMg: 1000 })
 })
@@ -429,7 +437,7 @@ test('Sync meldet einen ungültigen Token', async ({ page }) => {
 
 test('Vorne und hinten teilen sich den Scheitel', async ({ page }) => {
   await starten(page, ABEND)
-  await knopf(page, 'Kopfweh erfassen').tap()
+  await inFrage(page, 'Kopfweh heute?', 'Ja').tap()
   await page.locator('[data-zone="scheitel"]').first().tap()
   await expect(page.locator('.kopf__zone--aktiv')).toHaveCount(2)
   await page.locator('[data-zone="scheitel"]').nth(1).tap()
@@ -522,7 +530,7 @@ test('Dunkelmodus', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
   await starten(page, ABEND, VERLAUF)
   await page.screenshot({ path: `${AUSGABE}/heute-dunkel.png` })
-  await knopf(page, 'Kopfweh erfassen').tap()
+  await inFrage(page, 'Kopfweh heute?', 'Ja').tap()
   await page.locator('[data-zone="stirn-l"]').first().tap()
   await knopf(page, 'Stark Nichts geht mehr').tap()
   await expect(knopf(page, 'Stark Nichts geht mehr')).toHaveAttribute('aria-pressed', 'true')
@@ -536,7 +544,7 @@ test('Kein horizontales Scrollen', async ({ page }) => {
   await starten(page, ABEND, VERLAUF)
   const breite = () => page.evaluate(() => document.documentElement.scrollWidth)
   expect(await breite()).toBeLessThanOrEqual(390)
-  await knopf(page, 'Kopfweh erfassen').tap()
+  await inFrage(page, 'Kopfweh heute?', 'Ja').tap()
   await knopf(page, 'Details ergänzen').tap()
   await expect(knopf(page, 'Zu viel Sonne / wenig Sonnenschutz')).toBeVisible()
   expect(await breite()).toBeLessThanOrEqual(390)

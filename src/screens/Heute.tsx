@@ -512,9 +512,11 @@ export function Heute({ eintraege, krankheiten, garmin, jetzt, onKopfweh, onKran
             </span>
           </div>
         )}
-        <div className="reihe">
-          <button className="knopf" onClick={() => onKopfweh(datum)}>Kopfweh erfassen</button>
-        </div>
+        {art === 'morgen' && (
+          <div className="reihe">
+            <button className="knopf" onClick={() => onKopfweh(datum)}>Kopfweh erfassen</button>
+          </div>
+        )}
         {((hatVorschlaege && !fertig) || kannWieGestern) && (
           <div className="reihe">
             {hatVorschlaege && !fertig && (
